@@ -38,4 +38,3 @@ class MainMenu{
         this.optionsMenu.append(this.optionsText);
     }
 }
-

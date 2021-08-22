@@ -143,8 +143,30 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
         //#endregion
     }
 
-    let sfxVolume = 1;
-    let bgmVolume = 1;
+    //audio for selector menu
+    const sfxObject = new Audio();
+    const sfxSource = {select:"audio/droplet-select.mp3", confirm:"audio/confirm-select.mp3"}
+
+    //let bgmVolume = 1;
+
+    const bgmObject = new Audio();
+    const bgmSource = "bgm/tomorrow.mp3";
+    let bgmStart = false;
+
+    function GameAudio(audioObject, audioSource, loopAudio = null){
+        var _audioObject = audioObject;
+        var _audioSource = audioSource;
+        var _loopAudio = loopAudio;
+
+        _audioObject.src = "";
+        _audioObject.src = _audioSource;
+        _audioObject.loop = _loopAudio;
+
+        return _audioObject;
+    }
+
+    let sfxVolume = sfxObject.volume;
+    let bgmVolume = bgmObject.volume;
 
     const mainMenu = new MainMenu(menu, selector);
 
@@ -161,33 +183,12 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
         AddClassToElement(selector, 'selector');
     });
 
-    //audio for selector menu
-    const sfxObject = new Audio();
-    const sfxSource = {select:"audio/droplet-select.mp3", confirm:"audio/confirm-select.mp3"}
-
-    function SFX(audioObject, audioSource){
-        var _audioObject = audioObject;
-        var _audioSource = audioSource;
-
-        _audioObject.volume = sfxVolume;
-        _audioObject.src = "";
-        _audioObject.src = _audioSource;
-
-        return _audioObject;
-    }
-
-    //bgm
-    const bgmObject = new Audio();
-    bgmSource = "bgm/tomorrow.mp3";
-    let bgmStart = false;
-    bgmObject.loop = true;
-    bgmObject.volume = bgmVolume;
-
     document.addEventListener('click', ()=> {
         if(!bgmStart){
-            bgmObject.src = bgmSource;
-            bgmObject.play();
+            // bgmObject.src = bgmSource;
+            // bgmObject.play();
             bgmStart = true;
+            GameAudio(bgmObject, bgmSource, true).play();
         }
     });
 
@@ -202,17 +203,17 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
             case 38: //key up
                 if(ContainClass(appState, 'main-menu') && ContainClass(appState, 'options')){
                     //play sound if the selector is not on start
-                    SFX(sfxObject, sfxSource.select).play();
+                    GameAudio(sfxObject, sfxSource.select).play();
                     ToggleElementClass(appState, 'options', 'start');
                     mainMenu.startMenu.append(selector);
                     
                 } else if(ContainClass(appState, 'options-menu') && ContainClass(appState, 'bgm')){
-                    SFX(sfxObject, sfxSource.select).play();
+                    GameAudio(sfxObject, sfxSource.select).play();
                     ToggleElementClass(appState, 'bgm', 'sfx');
 
                     optionsMenu.SFXContainer.append(selector);
                 } else if(ContainClass(appState, 'options-menu') && ContainClass(appState, 'exit')){
-                    SFX(sfxObject, sfxSource.select).play();
+                    GameAudio(sfxObject, sfxSource.select).play();
                     ToggleElementClass(appState, 'exit', 'bgm');
                     optionsMenu.BGMContainer.append(selector);
                 }
@@ -220,16 +221,16 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
             case 40: //key down
                 if(ContainClass(appState, 'main-menu') && ContainClass(appState, 'start')){
                     //play sound if the selector is not on options
-                    SFX(sfxObject, sfxSource.select).play();
+                    GameAudio(sfxObject, sfxSource.select).play();
                     ToggleElementClass(appState, 'start', 'options');
                     mainMenu.optionsMenu.append(selector);         
                 }
                 else if(ContainClass(appState, 'options-menu') && ContainClass(appState, 'sfx')){
-                    SFX(sfxObject, sfxSource.select).play();
+                    GameAudio(sfxObject, sfxSource.select).play();
                     ToggleElementClass(appState, 'sfx', 'bgm');
                     optionsMenu.BGMContainer.append(selector);
                 } else if(ContainClass(appState, 'options-menu') && ContainClass(appState, 'bgm')){
-                    SFX(sfxObject, sfxSource.select).play();
+                    GameAudio(sfxObject, sfxSource.select).play();
                     ToggleElementClass(appState, 'bgm', 'exit');
                     optionsMenu.exitContainer.append(selector);
                 }
@@ -242,9 +243,9 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
                         sfxVolume = 0;
                     }
 
-                    SFX(sfxObject, sfxSource.select).volume = sfxVolume.toFixed(1);
-                    console.log("SFX:" + SFX(sfxObject, sfxSource.select).volume);
-                    SFX(sfxObject, sfxSource.select).play();
+                    sfxObject.volume = sfxVolume.toFixed(1);
+                    console.log("SFX:" + sfxVolume);
+                    GameAudio(sfxObject, sfxSource.select).play();
                     optionsMenu.SFXValueText.innerText = parseInt(sfxVolume * 10);
 
                     if(sfxVolume.toFixed(1) == 0){
@@ -260,7 +261,7 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
 
                     bgmObject.volume = bgmVolume.toFixed(1);
                     console.log("BGM:" + bgmObject.volume);
-                    SFX(sfxObject, sfxSource.select).play();
+                    GameAudio(sfxObject, sfxSource.select).play();
                     optionsMenu.BGMValueText.innerText = parseInt(bgmVolume * 10);
 
                     if(bgmVolume.toFixed(1) == 0){
@@ -274,9 +275,9 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
                     if(sfxVolume >= 1){
                         sfxVolume = 1;
                     }
-                    SFX(sfxObject, sfxSource.select).volume = sfxVolume.toFixed(1);
-                    console.log("SFX:" + SFX(sfxObject, sfxSource.select).volume);
-                    SFX(sfxObject, sfxSource.select).play();
+                    sfxObject.volume = sfxVolume.toFixed(1);
+                    console.log("SFX:" + sfxObject.volume);
+                    GameAudio(sfxObject, sfxSource.select).play();
                     optionsMenu.SFXValueText.innerText = parseInt(sfxVolume * 10);
                 }
 
@@ -288,14 +289,14 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
 
                     bgmObject.volume = bgmVolume.toFixed(1);
                     console.log("BGM:" + bgmObject.volume);
-                    SFX(sfxObject, sfxSource.select).play();
+                    GameAudio(sfxObject, sfxSource.select).play();
                     optionsMenu.BGMValueText.innerText = parseInt(bgmVolume * 10);
                 }
                 break;
             case 13: //key enter
                 if(ContainClass(appState, 'main-menu') && ContainClass(appState, 'options')){
                     //play selected sound
-                    SFX(sfxObject, sfxSource.confirm).play();
+                    GameAudio(sfxObject, sfxSource.confirm).play();
 
                     mainMenu.optionsText.classList.add('blink');
                     RemoveClassFromElement(appState, 'main-menu', 'options');
@@ -308,6 +309,10 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
                             ToggleElementClass(canvas, 'fade-out', 'fade-in');
                             RemoveAllChildElements(menu);
                             optionsMenu.Show();
+
+                            //save settings
+                            optionsMenu.sfxVolume = sfxVolume;
+                            optionsMenu.bgmVolume = bgmVolume;
                         });
                     }, 1000);  
 
@@ -318,7 +323,7 @@ function CreateCanvas(color, {particles : {enableStars = null, starsCount = null
                     },2500);
                 }else if(ContainClass(appState, 'options-menu') && ContainClass(appState, 'exit')){
                     //play selected sound
-                    SFX(sfxObject, sfxSource.confirm).play();
+                    GameAudio(sfxObject, sfxSource.confirm).play();
                     optionsMenu.exitText.classList.add('blink');
                     RemoveClassFromElement(appState, 'options-menu', 'exit');
 
